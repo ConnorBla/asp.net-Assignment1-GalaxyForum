@@ -1,0 +1,58 @@
+﻿@model IEnumerable<GalaxyForum.Models.Discussion>
+
+@{
+    ViewData["Title"] = "Your Discussions";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center text-white mb-4">Your Discussions</h1>
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </p>
+
+    <div class="row row-cols-1 g-4">
+        @foreach (var discussion in Model)
+        {
+            string truncatedContent = discussion.Content;
+
+            @if (discussion.Content.Length > 450)
+            {
+                truncatedContent = truncatedContent.Substring(0, 445) + "[...]";
+            }
+            <div class="col">
+                <div class="card bg-dark text-white h-100">
+                    <div class="card-header border-bottom border-secondary">
+                        <h5 class="mb-0">@discussion.Title</h5>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <p class="card-text">@truncatedContent</p>
+                            </div>
+                            @if (!string.IsNullOrEmpty(discussion.ImageFilename))
+                            {
+                                <div class="col-md-2 pd-3">
+                                    <img src="@Url.Content(discussion.ImageFilename)" class="img-fluid rounded" alt="Discussion Image" style="object-fit: cover; max-height: 150px;">
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-top border-secondary">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <small class="">Created on: @discussion.CreateDate.ToShortDateString()</small>
+                                <small class="ms-2">Comments: @(discussion.Comments?.Count ?? 0)</small>
+                            </div>
+                            <div class="col text-end">
+                                <a asp-action="Details" asp-route-id="@discussion.DiscussionId" class="btn btn-outline-light btn-sm">View Details</a>
+                                <a asp-action="Delete" asp-route-id="@discussion.DiscussionId" class="btn btn-danger btn-sm ms-2">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

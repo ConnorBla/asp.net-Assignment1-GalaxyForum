@@ -1,0 +1,108 @@
+﻿@model GalaxyForum.Models.Discussion
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container pt-5 mt-0 bg-dark">
+    <div class="card bg-dark text-white shadow-sm rounded-3">
+        <div class="card-body">
+            <!-- Title, left-aligned -->
+            <h1 class="card-title text-start bg-primary p-3 rounded-3">@Html.DisplayFor(model => model.Title)</h1>
+            <br class="text-break" />
+            <!-- Picture (if available) -->
+            @if (!string.IsNullOrEmpty(Model.ImageFilename))
+            {
+                <div class="text-center my-4">
+                    <img src='@Url.Content("~/" + Model.ImageFilename)'
+                         alt="Discussion Image"
+                         class="img-fluid rounded-3"
+                         style="max-width: 750px; height: auto;" />
+                </div>
+            }
+
+            <!-- Content -->
+            <div class="card-text">
+                @Html.DisplayFor(model => model.Content)
+            </div>
+        </div>
+        <div class="card-footer bg-transparent text-end">
+            <a asp-action="Delete" asp-route-id="@Model.DiscussionId" class="btn btn-outline-danger btn-sm ms-2 px-3 ">Delete</a>
+            <a asp-action="Edit" asp-route-id="@Model.DiscussionId" class="btn btn-outline-light btn-sm ms-2 px-3">Edit</a>
+            <small class="">@Html.DisplayFor(model => model.CreateDate)</small>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="mt-5">
+        <h4 class="text-white">Comments (@Model.Comments?.Count())</h4>
+        <hr class="text-white" />
+        <div class="d-flex gap-3 mb-3">
+            <button id="sortAsc" class="btn btn-outline-light">Oldest First</button>
+            <button id="sortDesc" class="btn btn-outline-light">Newest First</button>
+        </div>
+
+        <div id="comments">
+            @if (Model.Comments == null || !Model.Comments.Any())
+            {
+                <p class="text-muted">No comments yet.</p>
+                <p class="text-muted">Be the first by clicking below!</p>
+            }
+            else
+            {
+                @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreateDate))
+                {
+                    <div class="comment p-3 mb-3 rounded-3 shadow-sm bg-secondary"
+                         data-date="@comment.CreateDate"
+                         style="border: 1px solid rgba(255, 255, 255, 0.3);">
+                        <p>@comment.Content</p>
+                        <p class="text-muted">
+                            @comment.CreateDate.ToShortDateString() @comment.CreateDate.ToShortTimeString()
+                        </p>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="text-center">
+            <a asp-action="Create"
+               asp-controller="Comments"
+               asp-route-discussionId="@Model.DiscussionId"
+               class="btn btn-primary mt-3 mb-3">
+                Add Comment
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 d-flex justify-content-center gap-2">
+    <a asp-action="Index" class="btn btn-outline-light">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('sortAsc').addEventListener('click', function () {
+            sortComments(true);
+        });
+
+        document.getElementById('sortDesc').addEventListener('click', function () {
+            sortComments(false);
+        });
+
+        function sortComments(asc) {
+            var commentsContainer = document.getElementById('comments');
+            var comments = Array.from(commentsContainer.getElementsByClassName('comment'));
+            comments.sort(function (a, b) {
+                var dateA = new Date(a.getAttribute('data-date'));
+                var dateB = new Date(b.getAttribute('data-date'));
+                return asc ? dateA - dateB : dateB - dateA;
+            });
+            commentsContainer.innerHTML = '';
+            comments.forEach(function (comment) {
+                commentsContainer.appendChild(comment);
+            });
+        }
+    </script>
+}
+
+

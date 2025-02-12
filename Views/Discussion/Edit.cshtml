@@ -1,0 +1,59 @@
+﻿@model GalaxyForum.Models.Discussion
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="container pt-5 mt-0 bg-dark">
+    <div class="card bg-dark text-white shadow-sm rounded-3">
+        <div class="card-body">
+            <h1 class="card-title text-start bg-primary p-3 rounded-3">Edit Discussion</h1>
+            <hr class="text-white" />
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <form asp-action="Edit" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="DiscussionId" />
+                        <input type="hidden" asp-for="ImageFilename" />
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label"></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Content" class="form-label"></label>
+                            <textarea asp-for="Content" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="mb-3">
+                            <label for="imageFile" class="form-label">Upload Image to Change (optional)</label>
+                            <input type="file" name="imageFile" id="imageFile" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CreateDate" class="form-label"></label>
+                            <input asp-for="CreateDate" class="form-control" />
+                            <span asp-validation-for="CreateDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-light">Back to List</a>
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
